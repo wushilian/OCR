@@ -11,16 +11,16 @@ import numpy as np
 from PIL import Image, ImageFont, ImageDraw
 from multiprocessing import Pool
 
-char_set='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+char_set='0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 imgDir = 'val'
 numProcess = 12 
 def randHeight():
-    return random.randint(0,20)
+    return random.randint(0,40)
 def randRGB():
-        return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        return (random.randint(100, 200), random.randint(100, 200), random.randint(100, 200))
 def gen_rand():
     buf = ""
-    max_len = random.randint(4,9)
+    max_len = random.randint(30,35)
     for i in range(max_len):
        buf += random.choice(char_set)
     return buf
@@ -30,11 +30,12 @@ def generateImg(ind):
     rgb=randRGB()
     img_name= '{:08d}'.format(ind)+'_'+theChars+'.png'
     img_path=str(imgDir)+'/'+img_name
-    im = Image.new("RGB", (150, 50),rgb)
+    im = Image.new("RGB", (650, 80),rgb)
     dr = ImageDraw.Draw(im)
     height=randHeight()
-    font = ImageFont.truetype(os.path.join("fonts", "msyh.ttf"), 20)
+    font = ImageFont.truetype(os.path.join("fonts", "msyh.ttf"), 30)
     dr.text((10, height),theChars, font=font, fill="#000000")
+    im=im.convert('L')
     im.save(img_path)
     print(img_path)
 def run(num,path):
