@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Aug 29 09:16:15 2017
+
+@author: Administrator
+"""
+
+import os
+import random
+import numpy as np
+from PIL import Image, ImageFont, ImageDraw
+from multiprocessing import Pool
+
+char_set='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+imgDir = 'val'
+numProcess = 12 
+def randHeight():
+    return random.randint(0,20)
+def randRGB():
+        return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+def gen_rand():
+    buf = ""
+    max_len = random.randint(4,9)
+    for i in range(max_len):
+       buf += random.choice(char_set)
+    return buf
+def generateImg(ind):
+    global imgDir
+    theChars=gen_rand()
+    rgb=randRGB()
+    img_name= '{:08d}'.format(ind)+'_'+theChars+'.png'
+    img_path=str(imgDir)+'/'+img_name
+    im = Image.new("RGB", (150, 50),rgb)
+    dr = ImageDraw.Draw(im)
+    height=randHeight()
+    font = ImageFont.truetype(os.path.join("fonts", "msyh.ttf"), 20)
+    dr.text((10, height),theChars, font=font, fill="#000000")
+    im.save(img_path)
+    print(img_path)
+def run(num,path):
+    global imgDir
+    imgDir = path
+    if not os.path.exists(path):
+        os.mkdir(path)
+    with Pool(processes=numProcess) as pool:
+         pool.map(generateImg,range(num))
+if __name__=='__main__':
+    #run(64*2000,'train')
+    run(100,'val')
