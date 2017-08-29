@@ -1,0 +1,14 @@
+import cv2
+import os
+import matplotlib.pyplot as plt  
+
+current_dir='/home/wushilian/OCR/lstm_ctc_ocr-master/valnew'
+filenames=os.listdir(current_dir)
+for file in filenames:
+    path=os.path.join(current_dir,file)
+    img=cv2.imread(path,0)
+    img=cv2.medianBlur(img,7)
+    img=cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 9, 6.5)
+    #plt.imshow(img)
+    #plt.show()
+    cv2.imwrite(file,img)
