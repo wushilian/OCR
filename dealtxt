@@ -1,0 +1,25 @@
+import os
+
+def somemath(string):
+    s=string.split(',')
+    temp=''
+    if len(s)!=1:
+        temp+=s[0]+','+s[1]+','+s[2]+','+s[1]+','
+        temp+=s[2]+','+s[3]+','+s[0]+','+s[3]+',animal'+'\n'
+        return temp
+
+def handletxt(dirs):
+    file=os.listdir(dirs)
+    for i in range(len(file)):
+        temp=''
+        with open(os.path.join(dirs,file[i]),'r') as f:
+            while True:
+                lines=f.readline()
+                if not lines:
+                    break 
+                temp+=somemath(lines)
+        temp=temp[0:-1]                      
+        f=open(file[i],'w')
+        f.write(temp)
+        f.close
+handletxt('data')
