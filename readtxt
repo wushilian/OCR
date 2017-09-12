@@ -1,0 +1,125 @@
+#coding=gbk
+import os
+import cv2
+
+##############################################
+# ssd lab v1.1
+# wish
+# 2017-04-08 12:46:04
+
+#parameters
+path = "data"
+className = ['seacucumber','scallop','seaurchin']
+w=200
+h=100
+fmt = """
+            <object>
+                <name>%s</name>
+                <bndbox>
+                    <xmin>%d</xmin>
+                    <ymin>%d</ymin>
+                    <xmax>%d</xmax>
+                    <ymax>%d</ymax>
+                </bndbox>
+            </object>
+            """
+
+
+def saveXML(name, objs,cls,pmin,pmax):
+    with open(name, "w") as xml:
+        ss=name.split('\\')[1].split('.')[0]+'.jpg'
+        xml.write("<annotation><folder>VOC2007</folder><filename>%s</filename><size><width>%d</width><height>%d</height><depth>3</depth></size>" % (ss,w, h))
+        for item in objs:
+            fmt = """
+            <object>
+                <name>%s</name>
+                <bndbox>
+                    <xmin>%d</xmin>
+                    <ymin>%d</ymin>
+                    <xmax>%d</xmax>
+                    <ymax>%d</ymax>
+                </bndbox>
+            </object>
+            """
+            xml.write(fmt % (objs[cls], pmin[0], pmin[1], pmax[0], pmax[1]))
+
+        xml.write("</annotation>")
+
+    with open(name + ".txt", "w") as txt:
+        txt.write("%d,%d\n" % (len(objs), cls))
+        for item in objs:
+            d = item[0]
+            e = item[1]
+            pmin = (min(d[0], e[0]), min(d[1], e[1]))
+            pmax = (max(d[0], e[0]), max(d[1], e[1]))
+
+            cls = item[2]
+            txt.write("%d,%d,%d,%d,%d,%s\n" % (pmin[0], pmin[1], pmax[0], pmax[1], cls, className[cls]))
+def readtxt(file):
+    name=file.split('\\')[1].split('.')[0]+'.xml'
+    with open(name, "w") as xml:
+        with open(name + ".txt", "w") as txt:
+            ss=file.split('\\')[1].split('.')[0]+'.jpg'
+            xml.write("<annotation><folder>VOC2007</folder><filename>%s</filename><size><width>%d</width><height>%d</height><depth>3</depth></size>" % (ss,w, h))
+            
+            with open(file,'r') as file_open:
+                lines=file_open.readline()
+                while True:          
+                    if not lines:
+                        break
+                    s=lines[0:-1].split(' ')
+                    if s[-1]=='"appear"':
+                        pmin=(int(s[1]),int(s[2]))
+                        pmax=(int(s[3]),int(s[4]))
+                        cls=className.index(s[-2][1:][:-1])
+                        xml.write(fmt % (className[cls], pmin[0], pmin[1], pmax[0], pmax[1]))
+                        txt.write("%d,%d,%d,%d,%d,%s\n" % (pmin[0], pmin[1], pmax[0], pmax[1], cls, className[cls]))
+                    lines=file_open.readline()
+        xml.write("</annotation>")
+            
+file=os.listdir(path)
+length=len(file)
+print('the number of txt',length)
+for i in range(length):
+    readtxt(os.path.join(path,file[i]))
+    if i%100==0:
+        print(i)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
